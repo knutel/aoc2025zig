@@ -71,7 +71,7 @@ test "newPosition basic tests" {
     try std.testing.expect(pos10[1] == 1);
 }
 
-pub fn main() !void {
+pub fn day1() !void {
     // const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_test_01_01.txt");
     // const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_test_01_02.txt");
     const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_01.txt");
@@ -80,28 +80,18 @@ pub fn main() !void {
     var position: i32 = 50;
     var zeroes: i32 = 0;
     var part2: i32 = 0;
-    std.debug.print("Current Position: {d}\n", .{position});
-    std.debug.print("Hit zero position! Total zeroes: {d}\n", .{zeroes});
-    std.debug.print("Part 2 total increments: {d}\n", .{part2});
     for (codes.items) |code| {
-        std.debug.print("Direction: {s}, Steps: {d}\n", .{
-            switch (code.dir) {
-                .left => "Left",
-                .right => "Right",
-            },
-            code.steps,
-        });
         const new_pos, const new_wraps = newPosition(position, code);
         position = new_pos;
         part2 += @as(i32, new_wraps);
         if (position == 0) {
             zeroes += 1;
         }
-        std.debug.print("Current Position: {d}\n", .{position});
-        std.debug.print("Hit zero position! Total zeroes: {d}\n", .{zeroes});
-        std.debug.print("Part 2 total increments: {d}\n", .{part2});
     }
-    std.debug.print("Hit zero position! Total zeroes: {d}\n", .{zeroes});
-    std.debug.print("Part 2 total increments: {d}\n", .{part2});
-    std.debug.print("Final Position: {d}\n", .{part2 + zeroes});
+    std.debug.print("Day 1, Part 1: {d}\n", .{zeroes});
+    std.debug.print("Day 1, Part 2: {d}\n", .{part2 + zeroes});
+}
+
+pub fn main() !void {
+    try day1();
 }
