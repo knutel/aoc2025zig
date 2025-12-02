@@ -62,8 +62,17 @@ test "isInvalidSequencePart2 tests" {
 pub fn solve() !void {
     // const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_test_02_01.txt");
     // const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_test_01_02.txt");
-    const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_02.txt");
-    // TODO: free memory
+    try solveWithFile(std.heap.page_allocator, "input_02.txt");
+}
+pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
+    var lines = try aoc2025zig.readFileLines(allocator, path);
+    defer {
+        for (lines.items) |line| {
+            allocator.free(line);
+        }
+        lines.deinit(allocator);
+    }
+
     var sum: u64 = 0;
     var sum2: u64 = 0;
     for (lines.items) |line| {
@@ -89,4 +98,8 @@ pub fn solve() !void {
 
     std.debug.print("Day 2, Part 1: {d}\n", .{sum});
     std.debug.print("Day 2, Part 2: {d}\n", .{sum2});
+}
+
+test "day2 solve test" {
+    try solveWithFile(std.testing.allocator, "input_test_02_01.txt");
 }

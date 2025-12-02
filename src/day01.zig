@@ -74,9 +74,22 @@ test "newPosition basic tests" {
 pub fn solve() !void {
     // const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_test_01_01.txt");
     // const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_test_01_02.txt");
-    const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_01.txt");
-    // TODO: free memory
-    const codes = try aoc2025zig.parseDay1(std.heap.page_allocator, lines);
+    try solveWithFile(std.heap.page_allocator, "input_01.txt");
+}
+
+pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
+    var lines = try aoc2025zig.readFileLines(allocator, path);
+    defer {
+        for (lines.items) |line| {
+            allocator.free(line);
+        }
+        lines.deinit(allocator);
+    }
+
+    var codes = try aoc2025zig.parseDay1(allocator, lines);
+    defer {
+        codes.deinit(allocator);
+    }
     var position: i32 = 50;
     var zeroes: i32 = 0;
     var part2: i32 = 0;
@@ -90,4 +103,8 @@ pub fn solve() !void {
     }
     std.debug.print("Day 1, Part 1: {d}\n", .{zeroes});
     std.debug.print("Day 1, Part 2: {d}\n", .{part2 + zeroes});
+}
+
+test "day1 solve test" {
+    try solveWithFile(std.testing.allocator, "input_test_01_01.txt");
 }
