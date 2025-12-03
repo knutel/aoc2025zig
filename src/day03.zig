@@ -29,22 +29,19 @@ test "largestDigit tests" {
     try std.testing.expect(result[1] == 8);
 }
 
-pub fn findLargestJoltage(line: []const u8) u64 {
-    var largest = largestDigit(0, line);
-    var first: u8 = 0;
-    var second: u8 = 0;
+pub fn findLargestJoltage(line: []const u8, length: usize) u64 {
+    // var largest = largestDigit(0, line);
+    var joltage: u64 = 0;
 
-    if (largest[1] == line.len - 1) {
-        second = largest[0];
-        largest = largestDigit(0, line[0..largest[1]]);
-        first = largest[0];
-    } else {
-        first = largest[0];
-        largest = largestDigit(largest[1] + 1, line);
-        second = largest[0];
+    var pos: usize = 0;
+    var digitsLeft = length;
+    for (0..length) |_| {
+        const result = largestDigit(pos, line[0 .. line.len - (digitsLeft - 1)]);
+        joltage = joltage * 10 + @as(u64, result[0]);
+        pos = result[1] + 1;
+        digitsLeft -= 1;
     }
-    std.debug.print("Line: {s}, first: {d}, second: {d}\n", .{ line, first, second });
-    const joltage = first * 10 + second;
+
     return joltage;
 }
 
@@ -66,12 +63,13 @@ pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
     var sum: u64 = 0;
     var sum2: u64 = 0;
 
-    sum2 += 1;
-
     for (lines.items) |line| {
-        const joltage = findLargestJoltage(line);
-        std.debug.print("Joltage: {d}\n", .{joltage});
-        sum += joltage;
+        const joltage1 = findLargestJoltage(line, 2);
+        // std.debug.print("Joltage: {d}\n", .{joltage1});
+        sum += joltage1;
+        const joltage2 = findLargestJoltage(line, 12);
+        // std.debug.print("Joltage: {d}\n", .{joltage2});
+        sum2 += joltage2;
     }
 
     std.debug.print("Day 3, Part 1: {d}\n", .{sum});
