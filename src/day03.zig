@@ -30,7 +30,6 @@ test "largestDigit tests" {
 }
 
 pub fn findLargestJoltage(line: []const u8, length: usize) u64 {
-    // var largest = largestDigit(0, line);
     var joltage: u64 = 0;
 
     var pos: usize = 0;
@@ -46,12 +45,10 @@ pub fn findLargestJoltage(line: []const u8, length: usize) u64 {
 }
 
 pub fn solve() !void {
-    // const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_test_03_01.txt");
-    // const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_test_03_02.txt");
-    try solveWithFile(std.heap.page_allocator, "input_03.txt");
+    _ = try solveWithFile(std.heap.page_allocator, "input_03.txt");
 }
 
-pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
+pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u64, u64 } {
     var lines = try aoc2025zig.readFileLines(allocator, path);
     defer {
         for (lines.items) |line| {
@@ -64,18 +61,20 @@ pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
     var sum2: u64 = 0;
 
     for (lines.items) |line| {
-        const joltage1 = findLargestJoltage(line, 2);
-        // std.debug.print("Joltage: {d}\n", .{joltage1});
-        sum += joltage1;
-        const joltage2 = findLargestJoltage(line, 12);
-        // std.debug.print("Joltage: {d}\n", .{joltage2});
-        sum2 += joltage2;
+        var joltage = findLargestJoltage(line, 2);
+        sum += joltage;
+        joltage = findLargestJoltage(line, 12);
+        sum2 += joltage;
     }
 
     std.debug.print("Day 3, Part 1: {d}\n", .{sum});
     std.debug.print("Day 3, Part 2: {d}\n", .{sum2});
+
+    return .{ sum, sum2 };
 }
 
 test "day3 solve test" {
-    try solveWithFile(std.testing.allocator, "input_test_03_01.txt");
+    const result = try solveWithFile(std.testing.allocator, "input_test_03_01.txt");
+    try std.testing.expect(result[0] == 357);
+    try std.testing.expect(result[1] == 3121910778619);
 }
