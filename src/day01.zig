@@ -33,76 +33,58 @@ pub fn newPosition(oldPos: i32, code: aoc2025zig.Code) struct { i32, u32 } {
 
 test "newPosition basic tests" {
     var pos = newPosition(50, aoc2025zig.Code{ .dir = .left, .steps = 68 });
-    try std.testing.expect(pos[0] == 82);
-    try std.testing.expect(pos[1] == 1);
+    try std.testing.expect(std.meta.eql(pos, .{ 82, 1 }));
 
     pos = newPosition(82, aoc2025zig.Code{ .dir = .left, .steps = 30 });
-    try std.testing.expect(pos[0] == 52);
-    try std.testing.expect(pos[1] == 0);
+    try std.testing.expect(std.meta.eql(pos, .{ 52, 0 }));
 
     pos = newPosition(52, aoc2025zig.Code{ .dir = .right, .steps = 48 });
-    try std.testing.expect(pos[0] == 0);
-    try std.testing.expect(pos[1] == 0);
+    try std.testing.expect(std.meta.eql(pos, .{ 0, 0 }));
 
     pos = newPosition(0, aoc2025zig.Code{ .dir = .left, .steps = 5 });
-    try std.testing.expect(pos[0] == 95);
-    try std.testing.expect(pos[1] == 0);
+    try std.testing.expect(std.meta.eql(pos, .{ 95, 0 }));
 
     pos = newPosition(95, aoc2025zig.Code{ .dir = .right, .steps = 60 });
-    try std.testing.expect(pos[0] == 55);
-    try std.testing.expect(pos[1] == 1);
+    try std.testing.expect(std.meta.eql(pos, .{ 55, 1 }));
 
     pos = newPosition(55, aoc2025zig.Code{ .dir = .left, .steps = 55 });
-    try std.testing.expect(pos[0] == 0);
-    try std.testing.expect(pos[1] == 0);
+    try std.testing.expect(std.meta.eql(pos, .{ 0, 0 }));
 
     pos = newPosition(0, aoc2025zig.Code{ .dir = .left, .steps = 1 });
-    try std.testing.expect(pos[0] == 99);
-    try std.testing.expect(pos[1] == 0);
+    try std.testing.expect(std.meta.eql(pos, .{ 99, 0 }));
 
     pos = newPosition(99, aoc2025zig.Code{ .dir = .left, .steps = 99 });
-    try std.testing.expect(pos[0] == 0);
-    try std.testing.expect(pos[1] == 0);
+    try std.testing.expect(std.meta.eql(pos, .{ 0, 0 }));
 
     pos = newPosition(0, aoc2025zig.Code{ .dir = .right, .steps = 14 });
-    try std.testing.expect(pos[0] == 14);
-    try std.testing.expect(pos[1] == 0);
+    try std.testing.expect(std.meta.eql(pos, .{ 14, 0 }));
 
     pos = newPosition(14, aoc2025zig.Code{ .dir = .left, .steps = 82 });
-    try std.testing.expect(pos[0] == 32);
-    try std.testing.expect(pos[1] == 1);
+    try std.testing.expect(std.meta.eql(pos, .{ 32, 1 }));
 
     pos = newPosition(99, aoc2025zig.Code{ .dir = .right, .steps = 1 });
-    try std.testing.expect(pos[0] == 0);
-    try std.testing.expect(pos[1] == 0);
+    try std.testing.expect(std.meta.eql(pos, .{ 0, 0 }));
 
     pos = newPosition(99, aoc2025zig.Code{ .dir = .right, .steps = 2 });
-    try std.testing.expect(pos[0] == 1);
-    try std.testing.expect(pos[1] == 1);
+    try std.testing.expect(std.meta.eql(pos, .{ 1, 1 }));
 
     pos = newPosition(99, aoc2025zig.Code{ .dir = .right, .steps = 100 });
-    try std.testing.expect(pos[0] == 99);
-    try std.testing.expect(pos[1] == 1);
+    try std.testing.expect(std.meta.eql(pos, .{ 99, 1 }));
 
     pos = newPosition(99, aoc2025zig.Code{ .dir = .right, .steps = 101 });
-    try std.testing.expect(pos[0] == 0);
-    try std.testing.expect(pos[1] == 1);
+    try std.testing.expect(std.meta.eql(pos, .{ 0, 1 }));
 
     pos = newPosition(99, aoc2025zig.Code{ .dir = .left, .steps = 100 });
-    try std.testing.expect(pos[0] == 99);
-    try std.testing.expect(pos[1] == 1);
+    try std.testing.expect(std.meta.eql(pos, .{ 99, 1 }));
 
     pos = newPosition(99, aoc2025zig.Code{ .dir = .left, .steps = 101 });
-    try std.testing.expect(pos[0] == 98);
-    try std.testing.expect(pos[1] == 1);
+    try std.testing.expect(std.meta.eql(pos, .{ 98, 1 }));
 
     pos = newPosition(99, aoc2025zig.Code{ .dir = .left, .steps = 200 });
-    try std.testing.expect(pos[0] == 99);
-    try std.testing.expect(pos[1] == 2);
+    try std.testing.expect(std.meta.eql(pos, .{ 99, 2 }));
 
     pos = newPosition(99, aoc2025zig.Code{ .dir = .left, .steps = 199 });
-    try std.testing.expect(pos[0] == 0);
-    try std.testing.expect(pos[1] == 1);
+    try std.testing.expect(std.meta.eql(pos, .{ 0, 1 }));
 }
 
 pub fn solve() !void {

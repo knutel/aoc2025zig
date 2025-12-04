@@ -16,17 +16,13 @@ pub fn largestDigit(startPos: usize, string: []const u8) struct { u8, usize } {
 
 test "largestDigit tests" {
     var result = largestDigit(0, "123456789");
-    try std.testing.expect(result[0] == 9);
-    try std.testing.expect(result[1] == 8);
+    try std.testing.expect(std.meta.eql(result, .{ 9, 8 }));
     result = largestDigit(3, "123456789");
-    try std.testing.expect(result[0] == 9);
-    try std.testing.expect(result[1] == 8);
+    try std.testing.expect(std.meta.eql(result, .{ 9, 8 }));
     result = largestDigit(5, "987654321");
-    try std.testing.expect(result[0] == 4);
-    try std.testing.expect(result[1] == 5);
+    try std.testing.expect(std.meta.eql(result, .{ 4, 5 }));
     result = largestDigit(8, "000000009");
-    try std.testing.expect(result[0] == 9);
-    try std.testing.expect(result[1] == 8);
+    try std.testing.expect(std.meta.eql(result, .{ 9, 8 }));
 }
 
 pub fn findLargestJoltage(line: []const u8, length: usize) u64 {
