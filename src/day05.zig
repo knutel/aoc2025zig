@@ -7,41 +7,61 @@ pub fn solve() !void {
 
 const Range = struct { start: u64, end: u64 };
 
-// pub fn checkNeighbors(rolls: std.AutoHashMap(Point, bool), pos: Point) u8 {
-//     var count: u8 = 0;
-//     for (@max(@as(i32, @intCast(pos.x)) - 1, 0)..pos.x + 1 + 1) |nx| {
-//         for (@max(@as(i32, @intCast(pos.y)) - 1, 0)..pos.y + 1 + 1) |ny| {
-//             if (nx == pos.x and ny == pos.y) continue;
-//             if (rolls.contains(Point{ .x = nx, .y = ny })) {
-//                 count += 1;
-//             }
-//         }
-//     }
-//     return count;
-// }
-
-// pub fn getRemovableRolls(allocator: std.mem.Allocator, rolls: std.AutoHashMap(Point, bool)) !std.ArrayList(Point) {
-//     var result: std.ArrayList(Point) = .empty;
-//     var item_iter = rolls.iterator();
-//     while (item_iter.next()) |roll| {
-//         const pos = roll.key_ptr;
-//         const occupiedNeighbors = checkNeighbors(rolls, Point{ .x = pos.x, .y = pos.y });
-//         // std.debug.print("Pos ({d},{d}) = {d}\n", .{ pos.x, pos.y, occupiedNeighbors });
-//         if (occupiedNeighbors < 4) {
-//             // std.debug.print("OK positions ({d},{d}) = {d}\n", .{ pos.x, pos.y, occupiedNeighbors });
-//             try result.append(allocator, Point{ .x = pos.x, .y = pos.y });
-//         }
-//     }
-
-//     return result;
-// }
-
-pub fn rangeLessThan(context: void, a: Range, b: Range) bool {
+fn rangeLessThan(context: void, a: Range, b: Range) bool {
     _ = context;
     return a.start < b.start;
 }
 
-pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u64, u64 } {
+fn mergeOverlappingRangesSlow(ranges: *std.ArrayList(Range)) void {
+    std.mem.sort(Range, ranges.items, {}, rangeLessThan);
+    var length = ranges.items.len;
+    while (true) {
+        for (ranges.items[0 .. ranges.items.len - 1], ranges.items[1..], 0..) |*a, b, i| {
+            if (a.end >= b.start) {
+                a.end = @max(a.end, b.end);
+                _ = ranges.orderedRemove(i + 1);
+                break;
+            }
+        }
+        if (length == ranges.items.len) {
+            break;
+        }
+        length = ranges.items.len;
+    }
+}
+
+const ParseState = enum { InRanges, InIngredients, EOF };
+
+fn parseInput(allocator: std.mem.Allocator, lines: *std.ArrayList([]const u8), ranges: *std.ArrayList(Range), ingredients: *std.ArrayList(u64)) !void {
+    var state = ParseState.InRanges;
+    for (lines.items) |line| {
+        switch (state) {
+            .InRanges => {
+                if (line.len == 0) {
+                    state = ParseState.InIngredients;
+                    continue;
+                }
+                var it = std.mem.splitScalar(u8, line, '-');
+                const first = it.next() orelse return error.InvalidInput;
+                const second = it.next() orelse return error.InvalidInput;
+                const first_num = try std.fmt.parseInt(u64, first, 10);
+                const second_num = try std.fmt.parseInt(u64, second, 10);
+                try ranges.append(allocator, Range{ .start = first_num, .end = second_num });
+            },
+            .InIngredients => {
+                if (line.len == 0) {
+                    state = ParseState.EOF;
+                    continue;
+                }
+                const num = try std.fmt.parseInt(u64, line, 10);
+                try ingredients.append(allocator, num);
+            },
+            .EOF => return,
+        }
+    }
+}
+
+fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u64, u64 } {
     var lines = try aoc2025zig.readFileLines(allocator, path);
     defer {
         for (lines.items) |line| {
@@ -55,52 +75,12 @@ pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u
     var ingredients: std.ArrayList(u64) = .empty;
     defer ingredients.deinit(allocator);
 
-    var inRanges = true;
-    for (lines.items) |line| {
-        if (line.len == 0) {
-            inRanges = false;
-            continue;
-        }
-        if (inRanges) {
-            std.debug.print("Range line: {s}\n", .{line});
-            var it = std.mem.splitScalar(u8, line, '-');
-            const first = it.next() orelse return error.InvalidInput;
-            const second = it.next() orelse return error.InvalidInput;
-            const first_num = try std.fmt.parseInt(u64, first, 10);
-            const second_num = try std.fmt.parseInt(u64, second, 10);
-            try ranges.append(allocator, Range{ .start = first_num, .end = second_num });
-        } else {
-            const num = try std.fmt.parseInt(u64, line, 10);
-            try ingredients.append(allocator, num);
-        }
-    }
+    try parseInput(allocator, &lines, &ranges, &ingredients);
 
-    std.mem.sort(Range, ranges.items, {}, rangeLessThan);
-    var length = ranges.items.len;
-    while (true) {
-        for (ranges.items[0 .. ranges.items.len - 1], ranges.items[1..], 0..) |*a, b, i| {
-            if (a.end >= b.start) {
-                if (a.end >= b.end) {
-                    std.debug.print("Removing range: {d}-{d}\n", .{ b.start, b.end });
-                } else {
-                    std.debug.print("Merging ranges: {d}-{d} and {d}-{d}\n", .{ a.start, a.end, b.start, b.end });
-                }
-                a.end = @max(a.end, b.end);
-                _ = ranges.orderedRemove(i + 1);
-                break;
-            }
-        }
-        if (length == ranges.items.len) {
-            break;
-        }
-        length = ranges.items.len;
-    }
+    mergeOverlappingRangesSlow(&ranges);
 
-    var sum: u64 = 0;
-    var sum2: u64 = 0;
-
-    sum += 0;
-    sum2 += 0;
+    var part1: u64 = 0;
+    var part2: u64 = 0;
 
     for (ingredients.items) |ing| {
         var valid = false;
@@ -111,18 +91,18 @@ pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u
             }
         }
         if (valid) {
-            sum += 1;
+            part1 += 1;
         }
     }
 
     for (ranges.items) |range| {
-        sum2 += range.end - range.start + 1;
+        part2 += range.end - range.start + 1;
     }
 
-    std.debug.print("Day 5, Part 1: {d}\n", .{sum});
-    std.debug.print("Day 5, Part 2: {d}\n", .{sum2});
+    std.debug.print("Day 5, Part 1: {d}\n", .{part1});
+    std.debug.print("Day 5, Part 2: {d}\n", .{part2});
 
-    return .{ sum, sum2 };
+    return .{ part1, part2 };
 }
 
 test "day5 solve test" {
