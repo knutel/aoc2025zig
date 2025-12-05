@@ -66,7 +66,6 @@ pub fn readFileLines(gpa: std.mem.Allocator, path: []const u8) !std.ArrayList([]
     while (try reader.interface.takeDelimiter('\n')) |line| {
         line_no += 1;
         // std.debug.print("{d}--{s}\n", .{ line_no, line });
-        if (line.len == 0) continue; // Skip empty lines
         const l = try gpa.alloc(u8, line.len);
         std.mem.copyForwards(u8, l, line);
         try lines.append(gpa, l);
