@@ -73,6 +73,7 @@ pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
         lines.deinit(allocator);
     }
 
+    const t0 = try std.time.Instant.now();
     var sum: u64 = 0;
     var sum2: u64 = 0;
     for (lines.items) |line| {
@@ -95,6 +96,10 @@ pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
             }
         }
     }
+
+    const t1 = try std.time.Instant.now();
+    const diff = std.time.Instant.since(t1, t0);
+    std.debug.print("Day 2 solved in {d} ns\n", .{diff});
 
     std.debug.print("Day 2, Part 1: {d}\n", .{sum});
     std.debug.print("Day 2, Part 2: {d}\n", .{sum2});

@@ -70,6 +70,7 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u64, 
         lines.deinit(allocator);
     }
 
+    const t0 = try std.time.Instant.now();
     var ranges: std.ArrayList(Range) = .empty;
     defer ranges.deinit(allocator);
     var ingredients: std.ArrayList(u64) = .empty;
@@ -98,6 +99,10 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u64, 
     for (ranges.items) |range| {
         part2 += range.end - range.start + 1;
     }
+
+    const t1 = try std.time.Instant.now();
+    const diff = std.time.Instant.since(t1, t0);
+    std.debug.print("Day 5 solved in {d} ns\n", .{diff});
 
     std.debug.print("Day 5, Part 1: {d}\n", .{part1});
     std.debug.print("Day 5, Part 2: {d}\n", .{part2});
