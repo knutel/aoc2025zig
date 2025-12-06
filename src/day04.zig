@@ -37,7 +37,7 @@ pub fn getRemovableRolls(allocator: std.mem.Allocator, rolls: std.AutoHashMap(Po
 }
 
 pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u64, u64 } {
-    var lines = try aoc2025zig.readFileLines(allocator, path);
+    var lines = try aoc2025zig.readFileLines(allocator, path, false);
     defer {
         for (lines.items) |line| {
             allocator.free(line);

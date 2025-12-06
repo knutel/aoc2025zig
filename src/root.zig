@@ -55,7 +55,7 @@ pub fn parseDay1(gpa: std.mem.Allocator, lines: std.ArrayList([]const u8)) !std.
     return result;
 }
 
-pub fn readFileLines(gpa: std.mem.Allocator, path: []const u8) !std.ArrayList([]const u8) {
+pub fn readFileLines(gpa: std.mem.Allocator, path: []const u8, ignoreBlankLines: bool) !std.ArrayList([]const u8) {
     var file = try std.fs.cwd().openFile(path, .{});
     defer file.close();
 
@@ -65,6 +65,7 @@ pub fn readFileLines(gpa: std.mem.Allocator, path: []const u8) !std.ArrayList([]
     var lines: std.ArrayList([]const u8) = .empty;
     while (try reader.interface.takeDelimiter('\n')) |line| {
         line_no += 1;
+        if (ignoreBlankLines and line.len == 0) continue;
         // std.debug.print("{d}--{s}\n", .{ line_no, line });
         const l = try gpa.alloc(u8, line.len);
         std.mem.copyForwards(u8, l, line);

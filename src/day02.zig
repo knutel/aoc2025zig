@@ -65,7 +65,7 @@ pub fn solve() !void {
     try solveWithFile(std.heap.page_allocator, "input_02.txt");
 }
 pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
-    var lines = try aoc2025zig.readFileLines(allocator, path);
+    var lines = try aoc2025zig.readFileLines(allocator, path, false);
     defer {
         for (lines.items) |line| {
             allocator.free(line);
