@@ -7,7 +7,7 @@ pub fn solve() !void {
 
 const Operator = enum { Add, Multiply, Unknown };
 
-fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u128, u128 } {
+fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u64, u64 } {
     var lines = try aoc2025zig.readFileLines(allocator, path, true);
     defer {
         for (lines.items) |line| {
@@ -18,8 +18,8 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u128,
 
     const t0 = try std.time.Instant.now();
 
-    var part1: u128 = 0;
-    var part2: u128 = 0;
+    var part1: u64 = 0;
+    var part2: u64 = 0;
 
     part1 += 0;
     part2 += 0;
@@ -27,21 +27,21 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u128,
     const lineitems = lines.items;
     const rows = lineitems.len - 1;
     const cols = lineitems[0].len;
-    var numbers = [_]u128{0} ** 5;
+    var numbers = [_]u64{0} ** 5;
 
-    var result2: u128 = 0;
+    var result2: u64 = 0;
     var operator: Operator = Operator.Unknown;
 
     for (0..cols) |col| {
         var columnDelimiterOrEnd = true;
-        var number: u128 = 0;
+        var number: u64 = 0;
         for (0..rows) |row| {
             const c = lineitems[row][col];
             if (c == ' ') {
                 continue;
             }
             columnDelimiterOrEnd = false;
-            const val = @as(u128, c - '0');
+            const val = @as(u64, c - '0');
             numbers[row] = numbers[row] * 10 + val;
             number = number * 10 + val;
         }
@@ -67,7 +67,7 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u128,
         }
         columnDelimiterOrEnd = columnDelimiterOrEnd or col == cols - 1;
         if (columnDelimiterOrEnd) {
-            var result1: u128 = switch (operator) {
+            var result1: u64 = switch (operator) {
                 .Add => 0,
                 .Multiply => 1,
                 else => 0,
