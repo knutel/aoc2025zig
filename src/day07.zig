@@ -15,10 +15,10 @@ fn traverse(cache: *std.AutoHashMap(struct { usize, usize }, u64), lines: [][]u8
     var sum: u64 = 0;
     if (lines[y][x] == '^') {
         if (x > 0) {
-            sum += try traverse(cache, lines, x - 1, y);
+            sum += try traverse(cache, lines, x - 1, y + 1);
         }
         if (x < lines[y].len - 1) {
-            sum += try traverse(cache, lines, x + 1, y);
+            sum += try traverse(cache, lines, x + 1, y + 1);
         }
     } else {
         sum = try traverse(cache, lines, x, y + 1);
