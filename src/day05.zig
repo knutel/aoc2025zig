@@ -32,7 +32,7 @@ fn mergeOverlappingRangesSlow(ranges: *std.ArrayList(Range)) void {
 
 const ParseState = enum { InRanges, InIngredients, EOF };
 
-fn parseInput(allocator: std.mem.Allocator, lines: *std.ArrayList([]const u8), ranges: *std.ArrayList(Range), ingredients: *std.ArrayList(u64)) !void {
+fn parseInput(allocator: std.mem.Allocator, lines: *std.ArrayList([]u8), ranges: *std.ArrayList(Range), ingredients: *std.ArrayList(u64)) !void {
     var state = ParseState.InRanges;
     for (lines.items) |line| {
         switch (state) {

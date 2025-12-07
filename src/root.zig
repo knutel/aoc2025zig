@@ -32,7 +32,7 @@ pub const Code = struct {
     steps: i32,
 };
 
-pub fn parseDay1(gpa: std.mem.Allocator, lines: std.ArrayList([]const u8)) !std.ArrayList(Code) {
+pub fn parseDay1(gpa: std.mem.Allocator, lines: std.ArrayList([]u8)) !std.ArrayList(Code) {
     var result: std.ArrayList(Code) = .empty;
     // for (lines.items) |line| {
     //     std.debug.print("ParseLine: {s}\n", .{line});
@@ -55,14 +55,14 @@ pub fn parseDay1(gpa: std.mem.Allocator, lines: std.ArrayList([]const u8)) !std.
     return result;
 }
 
-pub fn readFileLines(gpa: std.mem.Allocator, path: []const u8, ignoreBlankLines: bool) !std.ArrayList([]const u8) {
+pub fn readFileLines(gpa: std.mem.Allocator, path: []const u8, ignoreBlankLines: bool) !std.ArrayList([]u8) {
     var file = try std.fs.cwd().openFile(path, .{});
     defer file.close();
 
     var file_buffer: [4096]u8 = undefined;
     var reader = file.reader(&file_buffer);
     var line_no: usize = 0;
-    var lines: std.ArrayList([]const u8) = .empty;
+    var lines: std.ArrayList([]u8) = .empty;
     while (try reader.interface.takeDelimiter('\n')) |line| {
         line_no += 1;
         if (ignoreBlankLines and line.len == 0) continue;
