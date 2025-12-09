@@ -11,6 +11,7 @@ const day6fasternoalloc = @import("day06fasternoalloc.zig");
 const day7 = @import("day07.zig");
 const day7optimized = @import("day07optimized.zig");
 const day8 = @import("day08.zig");
+const day9 = @import("day09.zig");
 
 pub fn main() !void {
     try day1.solve();
@@ -25,4 +26,5 @@ pub fn main() !void {
     try day7.solve();
     try day7optimized.solve();
     try day8.solve();
+    try day9.solve();
 }
