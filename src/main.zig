@@ -27,4 +27,7 @@ pub fn main() !void {
     try day7optimized.solve();
     try day8.solve();
     try day9.solve();
+    // TODO: Solve day 10 with Zig instead of Python
+    // TODO: Solve day 11 with Zig instead of Python
+    // TODO: Solve day 12 with Zig instead of Python
 }
