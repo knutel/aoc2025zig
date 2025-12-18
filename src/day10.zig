@@ -194,54 +194,53 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u16, 
         lines.deinit(allocator);
     }
 
-    var instructions: std.ArrayList(Instr) = .empty;
-    defer {
-        instructions.deinit(allocator);
-    }
-
-    for (lines.items) |line| {
-        var it = std.mem.tokenizeScalar(u8, line, ' ');
-        var instr: Instr = .{ .lights = 0, .lightCount = 0, .buttons = .{0} ** 20, .buttonCount = 0, .joltages = .{0} ** 20 };
-        while (it.next()) |p| {
-            if (p[0] == '[') {
-                for (p[1 .. p.len - 1], 0..) |l, i| {
-                    if (l == '#') {
-                        instr.lights |= @as(u16, 1) << @intCast(i);
-                    }
-                }
-                instr.lightCount = @intCast(p.len - 2);
-            } else if (p[0] == '(') {
-                var bIt = std.mem.tokenizeScalar(u8, p[1 .. p.len - 1], ',');
-                var button: u16 = 0;
-                while (bIt.next()) |b| {
-                    const buttonIndex = try std.fmt.parseInt(u16, b, 10);
-                    button |= @as(u16, 1) << @intCast(buttonIndex);
-                }
-                instr.buttons[instr.buttonCount] = button;
-                instr.buttonCount += 1;
-            } else if (p[0] == '{') {
-                var jIt = std.mem.tokenizeScalar(u8, p[1 .. p.len - 1], ',');
-                var joltageCount: u8 = 0;
-                while (jIt.next()) |b| {
-                    instr.joltages[joltageCount] = try std.fmt.parseInt(u16, b, 10);
-                    joltageCount += 1;
-                }
-                if (joltageCount != instr.lightCount) {
-                    unreachable;
-                }
-            }
-        }
-        try instructions.append(allocator, instr);
-    }
-
     var part1: u16 = 0;
     var part2: u16 = 0;
 
-    const iterations = 1;
+    const iterations = 10;
     var totalDuration: u64 = 0;
 
     for (0..iterations) |_| {
         const t0 = try std.time.Instant.now();
+        var instructions: std.ArrayList(Instr) = .empty;
+        defer {
+            instructions.deinit(allocator);
+        }
+
+        for (lines.items) |line| {
+            var it = std.mem.tokenizeScalar(u8, line, ' ');
+            var instr: Instr = .{ .lights = 0, .lightCount = 0, .buttons = .{0} ** 20, .buttonCount = 0, .joltages = .{0} ** 20 };
+            while (it.next()) |p| {
+                if (p[0] == '[') {
+                    for (p[1 .. p.len - 1], 0..) |l, i| {
+                        if (l == '#') {
+                            instr.lights |= @as(u16, 1) << @intCast(i);
+                        }
+                    }
+                    instr.lightCount = @intCast(p.len - 2);
+                } else if (p[0] == '(') {
+                    var bIt = std.mem.tokenizeScalar(u8, p[1 .. p.len - 1], ',');
+                    var button: u16 = 0;
+                    while (bIt.next()) |b| {
+                        const buttonIndex = try std.fmt.parseInt(u16, b, 10);
+                        button |= @as(u16, 1) << @intCast(buttonIndex);
+                    }
+                    instr.buttons[instr.buttonCount] = button;
+                    instr.buttonCount += 1;
+                } else if (p[0] == '{') {
+                    var jIt = std.mem.tokenizeScalar(u8, p[1 .. p.len - 1], ',');
+                    var joltageCount: u8 = 0;
+                    while (jIt.next()) |b| {
+                        instr.joltages[joltageCount] = try std.fmt.parseInt(u16, b, 10);
+                        joltageCount += 1;
+                    }
+                    if (joltageCount != instr.lightCount) {
+                        unreachable;
+                    }
+                }
+            }
+            try instructions.append(allocator, instr);
+        }
 
         part1 = 0;
         part2 = 0;
