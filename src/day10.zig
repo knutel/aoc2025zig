@@ -281,7 +281,7 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u16, 
             for (instr.joltages) |joltage| {
                 maxIterations = @max(maxIterations, joltage);
             }
-            while (true) {
+            outer: while (true) {
                 var solution: [16]Rational = undefined;
                 std.mem.copyForwards(Rational, &solution, &initialSolution);
                 findSolution(&solution, &matrix, b + 1, c);
@@ -301,19 +301,28 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u16, 
                 if (freeVarCount == 0) {
                     break;
                 }
-                for (0..freeVarCount) |i| {
-                    initialSolution[freeVars[i]].nom += 1;
-                    if (initialSolution[freeVars[i]].nom == maxIterations) {
-                        if (i + 1 == freeVarCount) {
+                while (true) {
+                    for (0..freeVarCount) |i| {
+                        initialSolution[freeVars[i]].nom += 1;
+                        if (initialSolution[freeVars[i]].nom == maxIterations) {
+                            if (i + 1 == freeVarCount) {
+                                break;
+                            }
+                            initialSolution[freeVars[i]].nom = 0;
+                        } else {
                             break;
                         }
-                        initialSolution[freeVars[i]].nom = 0;
-                    } else {
+                    }
+                    if (initialSolution[freeVars[freeVarCount - 1]].nom == maxIterations) {
+                        break :outer;
+                    }
+                    var initialSum: i64 = 0;
+                    for (0..freeVarCount) |i| {
+                        initialSum += initialSolution[freeVars[i]].nom;
+                    }
+                    if (initialSum < bestCount) {
                         break;
                     }
-                }
-                if (initialSolution[freeVars[freeVarCount - 1]].nom == maxIterations) {
-                    break;
                 }
             }
             part2 += @intCast(bestCount);
