@@ -7,7 +7,7 @@ pub fn solve() !void {
 
 const Instr = struct { lights: u16, lightCount: u8, buttons: [20]u16, buttonCount: u8, joltages: [20]u16 };
 
-const Path = struct { lights: u16, buttonPresses: [10000]u8, pressCount: u16 };
+const Path = struct { lights: u16, buttonPresses: u16, pressCount: u16 };
 
 const Rational = struct {
     nom: i64,
@@ -18,16 +18,22 @@ fn findShortest(shortestSoFar: *[65536]u16, state: Path, instr: Instr) void {
     if (shortestSoFar[state.lights] <= state.pressCount) {
         return;
     }
+    if (state.buttonPresses == (@as(u16, 1) << @as(u4, @intCast(instr.buttonCount))) - 1) {
+        return;
+    }
     shortestSoFar[state.lights] = state.pressCount;
     if (state.lights == instr.lights) {
         return;
     }
     for (0..instr.buttonCount) |i| {
+        if (state.buttonPresses & (@as(u16, 1) << @as(u4, @intCast(i))) != 0) {
+            continue;
+        }
         var newState = state;
         newState.lights ^= instr.buttons[i];
         const mask = (@as(u16, 1) << @as(u4, @intCast(instr.lightCount))) - 1;
         newState.lights &= mask;
-        newState.buttonPresses[newState.pressCount] = @intCast(i);
+        newState.buttonPresses |= (@as(u16, 1) << @as(u4, @intCast(i)));
         newState.pressCount += 1;
         findShortest(shortestSoFar, newState, instr);
     }
@@ -66,7 +72,7 @@ fn simplify(a: Rational) Rational {
         denom = 1;
     } else {
         for (primes) |p| {
-            while (@mod(nom, p) == 0 and @mod(denom, p) == 0) {
+            while (p < nom and p < denom and @mod(nom, p) == 0 and @mod(denom, p) == 0) {
                 nom = @divExact(nom, p);
                 denom = @divExact(denom, p);
             }
@@ -242,7 +248,7 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u16, 
 
         for (instructions.items) |instr| {
             var shortestSoFar: [65536]u16 = .{0xffff} ** 65536;
-            const state: Path = .{ .lights = 0, .buttonPresses = .{0} ** 10000, .pressCount = 0 };
+            const state: Path = .{ .lights = 0, .buttonPresses = 0, .pressCount = 0 };
             findShortest(&shortestSoFar, state, instr);
             part1 += shortestSoFar[instr.lights];
         }
