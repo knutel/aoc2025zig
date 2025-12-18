@@ -77,20 +77,17 @@ fn simplify(a: Rational) Rational {
 
 fn findSolution(solution: *[16]Rational, a: *[16][16]Rational, cols: usize, rows: usize) void {
     var iterations: usize = 0;
-    while (true) {
+    var missing: usize = 0;
+    for (solution[0 .. cols - 1]) |s| {
+        if (s.denom == 0) {
+            missing += 1;
+        }
+    }
+
+    while (missing > 0) {
         iterations += 1;
-        var allFound = true;
-        for (solution[0 .. cols - 1]) |s| {
-            if (s.denom == 0) {
-                allFound = false;
-                break;
-            }
-        }
-        if (allFound) {
-            break;
-        }
-        var h: usize = 0;
-        while (h < rows) {
+        var h: usize = rows - 1;
+        while (true) {
             var variable: usize = 1000;
             var value = a[h][cols - 1];
             var foundUnknown = false;
@@ -107,8 +104,12 @@ fn findSolution(solution: *[16]Rational, a: *[16][16]Rational, cols: usize, rows
             }
             if (variable != 1000 and !foundUnknown) {
                 solution[variable] = divide(value, a[h][variable]);
+                missing -= 1;
             }
-            h += 1;
+            if (h == 0) {
+                break;
+            }
+            h -= 1;
         }
         if (iterations > 20) {
             break;
