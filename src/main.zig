@@ -13,6 +13,7 @@ const day7optimized = @import("day07optimized.zig");
 const day8 = @import("day08.zig");
 const day9 = @import("day09.zig");
 const day10 = @import("day10.zig");
+const day11 = @import("day11.zig");
 
 pub fn main() !void {
     try day1.solve();
@@ -29,6 +30,6 @@ pub fn main() !void {
     try day8.solve();
     try day9.solve();
     try day10.solve();
-    // TODO: Solve day 11 with Zig instead of Python
+    try day11.solve();
     // TODO: Solve day 12 with Zig instead of Python
 }
