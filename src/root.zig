@@ -77,10 +77,10 @@ pub fn readFileLines(gpa: std.mem.Allocator, path: []const u8, ignoreBlankLines:
 test "parseDay1 works" {
     //    const allocator = std.testing.allocator;
     const allocator = std.heap.page_allocator;
-    var input: std.ArrayList([]const u8) = .empty;
-    try input.append(std.heap.page_allocator, "L2");
-    try input.append(std.heap.page_allocator, "R3");
-    try input.append(std.heap.page_allocator, "L10");
+    var input: std.ArrayList([]u8) = .empty;
+    try input.append(std.heap.page_allocator, try allocator.dupe(u8, "L2"));
+    try input.append(std.heap.page_allocator, try allocator.dupe(u8, "R3"));
+    try input.append(std.heap.page_allocator, try allocator.dupe(u8, "L10"));
     const codes = try parseDay1(allocator, input);
     try std.testing.expect(codes.items.len == 3);
     try std.testing.expect(codes.items[0].dir == .left);

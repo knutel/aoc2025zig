@@ -1,8 +1,8 @@
 const std = @import("std");
 const aoc2025zig = @import("root.zig");
 
-pub fn solve() !void {
-    _ = try solveWithFile(std.heap.page_allocator, "input_05.txt");
+pub fn solve(runBenchmark: bool) !void {
+    _ = try solveWithFile(runBenchmark, std.heap.page_allocator, "input_05.txt");
 }
 
 const Range = struct { start: u64, end: u64 };
@@ -61,7 +61,7 @@ fn parseInput(allocator: std.mem.Allocator, lines: *std.ArrayList([]u8), ranges:
     }
 }
 
-fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u64, u64 } {
+fn solveWithFile(runBenchmark: bool, allocator: std.mem.Allocator, path: []const u8) !struct { u64, u64 } {
     var lines = try aoc2025zig.readFileLines(allocator, path, false);
     defer {
         for (lines.items) |line| {
@@ -71,6 +71,8 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u64, 
     }
 
     const t0 = try std.time.Instant.now();
+    _ = runBenchmark;
+
     var ranges: std.ArrayList(Range) = .empty;
     defer ranges.deinit(allocator);
     var ingredients: std.ArrayList(u64) = .empty;
@@ -111,7 +113,7 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u64, 
 }
 
 test "day5 solve test" {
-    const result = try solveWithFile(std.testing.allocator, "input_test_05_01.txt");
+    const result = try solveWithFile(false, std.testing.allocator, "input_test_05_01.txt");
     try std.testing.expect(result[0] == 3);
     try std.testing.expect(result[1] == 14);
 }

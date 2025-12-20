@@ -1,8 +1,8 @@
 const std = @import("std");
 const aoc2025zig = @import("root.zig");
 
-pub fn solve() !void {
-    _ = try solveWithFile(std.heap.page_allocator, "input_11.txt", 0);
+pub fn solve(runBenchmark: bool) !void {
+    _ = try solveWithFile(runBenchmark, std.heap.page_allocator, "input_11.txt", 0);
 }
 
 const Mapping = struct {
@@ -39,7 +39,7 @@ fn traverse(allocator: std.mem.Allocator, mappings: *std.StringHashMap(Mapping),
     return path_count.get(position) orelse unreachable;
 }
 
-fn solveWithFile(allocator: std.mem.Allocator, path: []const u8, part: usize) !struct { usize, usize } {
+fn solveWithFile(runBenchmark: bool, allocator: std.mem.Allocator, path: []const u8, part: usize) !struct { usize, usize } {
     var lines = try aoc2025zig.readFileLines(allocator, path, true);
     defer {
         for (lines.items) |line| {
@@ -51,7 +51,7 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8, part: usize) !s
     var part1: usize = 0;
     var part2: usize = 0;
 
-    const iterations = 100;
+    const iterations: usize = if (runBenchmark) 100 else 1;
     var totalDuration: u64 = 0;
 
     for (0..iterations) |_| {
@@ -118,8 +118,8 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8, part: usize) !s
 }
 
 test "day11 solve test" {
-    const result1 = try solveWithFile(std.testing.allocator, "input_test_11_01.txt", 1);
+    const result1 = try solveWithFile(false, std.testing.allocator, "input_test_11_01.txt", 1);
     try std.testing.expectEqual(5, result1[0]);
-    const result2 = try solveWithFile(std.testing.allocator, "input_test_11_02.txt", 2);
+    const result2 = try solveWithFile(false, std.testing.allocator, "input_test_11_02.txt", 2);
     try std.testing.expectEqual(2, result2[1]);
 }

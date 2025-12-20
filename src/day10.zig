@@ -1,8 +1,8 @@
 const std = @import("std");
 const aoc2025zig = @import("root.zig");
 
-pub fn solve() !void {
-    _ = try solveWithFile(std.heap.page_allocator, "input_10.txt");
+pub fn solve(runBenchmark: bool) !void {
+    _ = try solveWithFile(runBenchmark, std.heap.page_allocator, "input_10.txt");
 }
 
 const Instr = struct { lights: u16, lightCount: u8, buttons: [20]u16, buttonCount: u8, joltages: [20]u16 };
@@ -185,7 +185,7 @@ fn gaussEliminate(a: *[16][16]Rational, cols: usize, rows: usize) void {
     }
 }
 
-fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u16, u16 } {
+fn solveWithFile(runBenchmark: bool, allocator: std.mem.Allocator, path: []const u8) !struct { u16, u16 } {
     var lines = try aoc2025zig.readFileLines(allocator, path, true);
     defer {
         for (lines.items) |line| {
@@ -197,7 +197,7 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u16, 
     var part1: u16 = 0;
     var part2: u16 = 0;
 
-    const iterations = 10;
+    const iterations: usize = if (runBenchmark) 10 else 1;
     var totalDuration: u64 = 0;
 
     for (0..iterations) |_| {
@@ -341,7 +341,7 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u16, 
 }
 
 test "day10 solve test" {
-    const result = try solveWithFile(std.testing.allocator, "input_test_10_01.txt");
+    const result = try solveWithFile(false, std.testing.allocator, "input_test_10_01.txt");
     try std.testing.expectEqual(7, result[0]);
     try std.testing.expectEqual(33, result[1]);
 }

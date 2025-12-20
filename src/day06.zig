@@ -1,11 +1,11 @@
 const std = @import("std");
 const aoc2025zig = @import("root.zig");
 
-pub fn solve() !void {
-    _ = try solveWithFile(std.heap.page_allocator, "input_06.txt");
+pub fn solve(runBenchmark: bool) !void {
+    _ = try solveWithFile(runBenchmark, std.heap.page_allocator, "input_06.txt");
 }
 
-fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u128, u128 } {
+fn solveWithFile(runBenchmark: bool, allocator: std.mem.Allocator, path: []const u8) !struct { u128, u128 } {
     var lines = try aoc2025zig.readFileLines(allocator, path, true);
     defer {
         for (lines.items) |line| {
@@ -15,6 +15,7 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u128,
     }
 
     const t0 = try std.time.Instant.now();
+    _ = runBenchmark;
 
     var part1: u128 = 0;
     var part2: u128 = 0;
@@ -112,7 +113,7 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u128,
 }
 
 test "day6 solve test" {
-    const result = try solveWithFile(std.testing.allocator, "input_test_06_01.txt");
+    const result = try solveWithFile(false, std.testing.allocator, "input_test_06_01.txt");
     try std.testing.expectEqual(4277556, result[0]);
     try std.testing.expectEqual(3263827, result[1]);
 }

@@ -1,8 +1,8 @@
 const std = @import("std");
 const aoc2025zig = @import("root.zig");
 
-pub fn solve() !void {
-    _ = try solveWithFile(std.heap.page_allocator, "input_07.txt");
+pub fn solve(runBenchmark: bool) !void {
+    _ = try solveWithFile(runBenchmark, std.heap.page_allocator, "input_07.txt");
 }
 
 fn traverse(cache: *[142 >> 1][142]u64, lines: [][]u8, x: usize, y: usize) !u64 {
@@ -27,8 +27,8 @@ fn traverse(cache: *[142 >> 1][142]u64, lines: [][]u8, x: usize, y: usize) !u64 
     return sum;
 }
 
-fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u128, u128 } {
-    const iterations = 10000;
+fn solveWithFile(runBenchmark: bool, allocator: std.mem.Allocator, path: []const u8) !struct { u128, u128 } {
+    const iterations: usize = if (runBenchmark) 10000 else 1;
     var totalDuration: u64 = 0;
 
     var part1: u128 = 0;
@@ -85,7 +85,7 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u128,
 }
 
 test "day7 solve test" {
-    const result = try solveWithFile(std.testing.allocator, "input_test_07_01.txt");
+    const result = try solveWithFile(false, std.testing.allocator, "input_test_07_01.txt");
     try std.testing.expectEqual(21, result[0]);
     try std.testing.expectEqual(40, result[1]);
 }

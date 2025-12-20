@@ -87,13 +87,13 @@ test "newPosition basic tests" {
     try std.testing.expect(std.meta.eql(pos, .{ 0, 1 }));
 }
 
-pub fn solve() !void {
+pub fn solve(runBenchmark: bool) !void {
     // const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_test_01_01.txt");
     // const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_test_01_02.txt");
-    try solveWithFile(std.heap.page_allocator, "input_01.txt");
+    try solveWithFile(runBenchmark, std.heap.page_allocator, "input_01.txt");
 }
 
-pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
+fn solveWithFile(runBenchmark: bool, allocator: std.mem.Allocator, path: []const u8) !void {
     var lines = try aoc2025zig.readFileLines(allocator, path, false);
     defer {
         for (lines.items) |line| {
@@ -103,6 +103,8 @@ pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
     }
 
     const t0 = try std.time.Instant.now();
+    _ = runBenchmark;
+
     var codes = try aoc2025zig.parseDay1(allocator, lines);
     defer {
         codes.deinit(allocator);
@@ -128,5 +130,5 @@ pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
 }
 
 test "day1 solve test" {
-    try solveWithFile(std.testing.allocator, "input_test_01_01.txt");
+    try solveWithFile(false, std.testing.allocator, "input_test_01_01.txt");
 }

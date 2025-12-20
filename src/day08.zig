@@ -1,8 +1,8 @@
 const std = @import("std");
 const aoc2025zig = @import("root.zig");
 
-pub fn solve() !void {
-    _ = try solveWithFile(std.heap.page_allocator, "input_08.txt");
+pub fn solve(runBenchmark: bool) !void {
+    _ = try solveWithFile(runBenchmark, std.heap.page_allocator, "input_08.txt");
 }
 
 const Point = struct { x: i64, y: i64, z: i64 };
@@ -14,7 +14,7 @@ fn distanceLessThan(context: void, a: Distance, b: Distance) bool {
     return a.distance < b.distance;
 }
 
-fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { i64, i64 } {
+fn solveWithFile(runBenchmark: bool, allocator: std.mem.Allocator, path: []const u8) !struct { i64, i64 } {
     var lines = try aoc2025zig.readFileLines(allocator, path, true);
     defer {
         for (lines.items) |line| {
@@ -26,7 +26,7 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { i64, 
     var part1: i64 = 0;
     var part2: i64 = 0;
 
-    const iterations = 100;
+    const iterations: usize = if (runBenchmark) 100 else 1;
     var totalDuration: u64 = 0;
     for (0..iterations) |_| {
         const t0 = try std.time.Instant.now();
@@ -115,7 +115,7 @@ fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { i64, 
 }
 
 test "day8 solve test" {
-    const result = try solveWithFile(std.testing.allocator, "input_test_08_01.txt");
+    const result = try solveWithFile(false, std.testing.allocator, "input_test_08_01.txt");
     try std.testing.expectEqual(40, result[0]);
     try std.testing.expectEqual(25272, result[1]);
 }

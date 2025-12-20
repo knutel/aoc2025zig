@@ -59,12 +59,12 @@ test "isInvalidSequencePart2 tests" {
     try std.testing.expect(isInvalidSequencePart2(123321) == false);
 }
 
-pub fn solve() !void {
+pub fn solve(runBenchmark: bool) !void {
     // const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_test_02_01.txt");
     // const lines = try aoc2025zig.readFileLines(std.heap.page_allocator, "input_test_01_02.txt");
-    try solveWithFile(std.heap.page_allocator, "input_02.txt");
+    try solveWithFile(runBenchmark, std.heap.page_allocator, "input_02.txt");
 }
-pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
+fn solveWithFile(runBenchmark: bool, allocator: std.mem.Allocator, path: []const u8) !void {
     var lines = try aoc2025zig.readFileLines(allocator, path, false);
     defer {
         for (lines.items) |line| {
@@ -74,6 +74,8 @@ pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
     }
 
     const t0 = try std.time.Instant.now();
+    _ = runBenchmark;
+
     var sum: u64 = 0;
     var sum2: u64 = 0;
     for (lines.items) |line| {
@@ -106,5 +108,5 @@ pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !void {
 }
 
 test "day2 solve test" {
-    try solveWithFile(std.testing.allocator, "input_test_02_01.txt");
+    try solveWithFile(false, std.testing.allocator, "input_test_02_01.txt");
 }

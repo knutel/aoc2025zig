@@ -1,8 +1,8 @@
 const std = @import("std");
 const aoc2025zig = @import("root.zig");
 
-pub fn solve() !void {
-    _ = try solveWithFile(std.heap.page_allocator, "input_04.txt");
+pub fn solve(runBenchmark: bool) !void {
+    _ = try solveWithFile(runBenchmark, std.heap.page_allocator, "input_04.txt");
 }
 
 const Point = struct { x: usize, y: usize };
@@ -36,7 +36,7 @@ pub fn getRemovableRolls(allocator: std.mem.Allocator, rolls: std.AutoHashMap(Po
     return result;
 }
 
-pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u64, u64 } {
+fn solveWithFile(runBenchmark: bool, allocator: std.mem.Allocator, path: []const u8) !struct { u64, u64 } {
     var lines = try aoc2025zig.readFileLines(allocator, path, false);
     defer {
         for (lines.items) |line| {
@@ -46,6 +46,7 @@ pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u
     }
 
     const t0 = try std.time.Instant.now();
+    _ = runBenchmark;
 
     var sum: u64 = 0;
     var sum2: u64 = 0;
@@ -90,7 +91,7 @@ pub fn solveWithFile(allocator: std.mem.Allocator, path: []const u8) !struct { u
 }
 
 test "day3 solve test" {
-    const result = try solveWithFile(std.testing.allocator, "input_test_04_01.txt");
+    const result = try solveWithFile(false, std.testing.allocator, "input_test_04_01.txt");
     try std.testing.expect(result[0] == 13);
     try std.testing.expect(result[1] == 43);
 }
