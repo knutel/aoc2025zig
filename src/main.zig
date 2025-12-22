@@ -14,6 +14,7 @@ const day8 = @import("day08.zig");
 const day9 = @import("day09.zig");
 const day10 = @import("day10.zig");
 const day11 = @import("day11.zig");
+const day12 = @import("day12.zig");
 
 pub fn main() !void {
     var argIter = try std.process.argsWithAllocator(std.heap.page_allocator);
@@ -45,5 +46,5 @@ pub fn main() !void {
     try day9.solve(runBenchmark);
     try day10.solve(runBenchmark);
     try day11.solve(runBenchmark);
-    // TODO: Solve day 12 with Zig instead of Python
+    try day12.solve(runBenchmark);
 }
